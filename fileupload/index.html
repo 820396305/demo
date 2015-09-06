@@ -1,0 +1,96 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文件上传demo</title>
+<script src="jquery-2.1.1.min.js"></script>
+<script src="fileupload.js"></script>
+<style>
+	body{font-size:12px;}
+	.file-items{list-style:none;padding:10px;}
+	.file-error{border:1px solid red;box-shadow:0px 0px 10px red;-webkit-animation:FileError 2s infinite ease-in-out;}
+	.file-items li{display:inline-block;border:1px solid #bbb; color:#369;padding:2px 10px;line-height:20px;margin:5px 5px;background:white;}
+	.file-items li>span:last-child{padding:0 0 0 8px;cursor:pointer;}
+	.file-add{cursor:pointer;font-weight:bold;color:#336699;line-height:30px;display:inline;}
+	
+	.img{width:200;padding:4px;border:1px solid #ccc;vertical-align:top;}
+	
+@-webkit-keyframes FileError{
+	0%{box-shadow:0px 0px 10px red;}
+	50%{box-shadow:0px 0px 0px red;}
+	100%{box-shadow:0px 0px 10px red;}
+}
+</style>
+
+</head>
+
+<body>
+
+<ul class="file-items"></ul>
+
+<button onclick="up.chooseFile()">单选</button>
+<button onclick="up.chooseFiles()">多选</button>
+<button onclick="console.log(up.getFiles());">获取文件</button>
+<button onclick="clearFile()">清空</button>
+<button onclick="up.chooseFile('image/*')">单选图片</button>
+<button onclick="up.chooseImages()">多选图片</button>
+<button onclick="up.chooseFiles('text/html')">多选html</button>
+<button onclick="up.chooseCammar()">拍照上传</button>
+
+
+<button onclick="up.upload('/test.php','demo[]',{hello:'world'},function(){alert('上传成功')},function(rs){console.log(rs)})">上传</button>
+
+
+<div id="imageBox" style="border:1px solid red;padding:10px;margin:10px;"></div>
+
+
+<script>
+
+	var box = document.getElementById('imageBox');
+
+	var up = new window.IO.fileUpload();
+	console.log(up);
+	up.change(function(file,errormsg){
+		console.log(up.getFiles());
+		var img = up.getImage(file,"img");
+		img && box.appendChild(img);
+		addFile(file,errormsg)
+	},{maxsize:2*1024*1024,type:['image','doc','txt']});
+	
+	function addFile(file,msg){
+		if(msg){
+			$(".file-items").append('<li class="file-error" title="错误信息:'+msg+'\n文件大小：'+(file.size/1024).toFixed(2)+'Kb"><span>'+file.name+'</span><span class="close" data-ix='+file.index+'>×</span></li>');
+		}else{
+			$(".file-items").append('<li title="文件大小：'+(file.size/1024).toFixed(2)+'Kb"><span>'+file.name+'</span><span class="close" data-ix='+file.index+'>×</span></li>');
+		}
+	}
+	//删除
+	$(document).delegate(".close","click",function(){
+		var ix = $(this).attr('data-ix'),_this = this;;
+		up.delete(ix,function(){
+			_this.parentNode.remove();
+			$(box).children().each(function(){
+				this.index == ix && this.delete();
+			})
+		});
+	});
+	//清空
+	function clearFile(){
+		up.clear(function(){
+			$('[data-ix]').parent().remove();
+			$('#imageBox').html('');
+		});
+	}
+
+
+	window.onerror = function(x,y,z){
+		alert(x);
+		alert(y);
+		alert(z);
+	}
+</script>
+
+
+</body>
+</html>
