@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>分页</title>
+    <script src="static/js/jquery-2.1.1.min.js"></script>
+    <script>
+                /*========== prompt window =========*/
+        (function () {
+            var index = 1;      //弹出层索引 主要用于标志Id
+            var showindex = 0;  //主要用于 弹出层z-index
+
+            //默认
+            var defaultOptions = {
+                title: "",
+                html: "",
+                url: "",
+                buttons: []
+            }
+            function prompt(options) {
+                if (typeof options == "object") {
+                    options = $.extend(defaultOptions, options);
+                } else {
+                    options = {
+                        title: arguments[0].toString(),
+                        html: arguments[1].toString(),
+                        buttons: arguments[2] || []
+                    }
+                }
+                //----以上将参数均转换成统一对象形式---
+                var p = new popup(options);
+                return p;
+            }
+
+            function promptPage(title, url) {
+                var options = {
+                    title: title.toString(),
+                    url: url,
+                    buttons: arguments[2] || [],
+                    width: arguments[3] || 600,
+                    height: arguments[4] || 400
+                }
+                //----以上将参数均转换成统一对象形式---
+
+                var p = new popup(options);
+                return p;
+            }
+
+            //
+            function popup(options) {
+                var popupDom = null;
+                var exeConfirm, exeSave, exeDelete, exeCancel, exeClose;
+                this.onClose = function (callback) { exeClose = callback; };
+                this.onConfirm = function (callback) { exeConfirm = callback; };
+                this.onCancel = function (callback) { exeCancel = callback; };
+                this.onSave = function (callback) { exeSave = callback; };
+                this.onDelete = function (callback) { exeDelete = callback; };
+
+                var self = this;
+                //显示
+                this.show = function () {
+                    popupDom.parents(".popup-box").show();
+                    popupDom.siblings(".layer").css("z-index", 1000 + showindex);
+                    popupDom.css("z-index", 1001 + showindex);
+                    showindex += 2;
+                }
+                //隐藏
+                this.hide = function () {
+                    popupDom.parents(".popup-box").hide();
+                }
+                //关闭
+                this.close = function () {
+                    if (typeof (exeClose) == "function") exeClose();
+                    popupDom.parents(".popup-box").remove();
+                    index--;
+                }
+                this.resize = function(){
+                    autosize(popupDom)
+                }
+                //创建一个新窗体
+                var create = function () {
+                    var html = '<div class="popup-box"><div class="layer"></div><div class="popup" id="popup_' + index + '"><div class="title"><div class="name fl">';
+                    html += options.title;
+                    html += '</div><div class="close fr"></div></div><div class="main">';
+                    if (options.html != null && options.html != "") {
+                        html += '<div class="content">' + options.html + '</div>';
+                    } else if (options.url != null && options.url != "") {
+                        var width = options.width || 600;
+                        var height = options.height || 400;
+                        html += '<iframe src="' + options.url + '" width="' + width + '" height="' + height + '" style="border:0;" ></iframe>';
+                    } else {
+
+                    }
+                    html += '</div>';
+                    if (options.buttons && options.buttons instanceof Array && options.buttons.length > 0) {
+                        html += '<div class="buttons box">';
+                        for (var i = 0; i < options.buttons.length; i++) {
+                            if (options.buttons[i] == "confirm") {
+                                html += '<div class="button confirm inline">确认</div>';
+                            } else if (options.buttons[i] == "save") {
+                                html += '<div class="button save inline">保存</div>';
+                            } else if (options.buttons[i] == "cancel") {
+                                html += '<div class="button cancel inline">取消</div>';
+                            } else if (options.buttons[i] == "delete") {
+                                html += '<div class="button delete inline">删除</div>';
+                            }
+                        }
+                        html += '</div>';
+                    }
+                    html += '</div></div>';
+
+                    $("body").append(html);
+                    popupDom = $("#popup_" + index);
+                    //居中
+                    popupDom.css("width",popupDom.width()+20);
+                    autosize(popupDom);
+                    //顶层
+                    $("#popup_" + index).siblings(".layer").css("z-index", 1000 + showindex);
+                    $("#popup_" + index).css("z-index", 1001 + showindex);
+
+                    //绑定
+                    bindEventListener(popupDom);
+                    $(window).bind('resize',function(){
+                       autosize(popupDom);
+                    });
+                    index++; showindex += 2;
+                    new window.UI.drag('#popup_'+(index-1)+' .title','#popup_'+(index-1));
+                }
+                function autosize(dom){
+                    var CHeight = document.documentElement.clientHeight,
+                        CWidth = document.documentElement.clientWidth,
+                        PHeight = dom.height(),PWidth = dom.width();
+                    dom.find(".main").css("max-height",CHeight - 75);
+                    dom.css('top',CHeight>PHeight?(CHeight-PHeight)/2:10);
+                    dom.css('left',(CWidth-PWidth)/2);
+                }
+
+                //返回窗体里面内容对象
+                this.content = function () {
+                    if (popupDom.find(".content").length != 0) {
+                        return popupDom.find(".content");
+                    }
+                    return null;
+                }
+                //绑定各种事件
+                var bindEventListener = function (popdom) {
+                    popdom.undelegate(".close", "click");
+                    popdom.delegate(".close", "click", function () {
+                        //self.hide();      //多窗口，重叠问题
+                        self.close();
+                    });
+                    $(document).undelegate("body", "keydown");
+                    $(document).delegate("body", "keydown", function (e) {
+                        if (e.keyCode == 27) {      //按下 ESC 键
+                            if (index - 1 >= 1) {
+                                var topPopup = null, maxindex = -1;
+                                $(".popup").each(function () {
+                                    if ($(this).parents(".popup-box").css("display") != "none") {
+                                        topPopup = $(this).css("z-index") > maxindex ? $(this) : topPopup;
+                                    }
+                                });
+                                if (topPopup != null) { topPopup.find(".close").trigger("click"); }
+                            }
+
+                        }
+                    });
+                    popdom.undelegate(".confirm,.save,.delete,.cancel", "click");
+                    popdom.delegate(".confirm", "click", function () { if (typeof exeConfirm == "function") { exeConfirm(); } });
+                    popdom.delegate(".save", "click", function () { if (typeof exeSave == "function") { exeSave(); } });
+                    popdom.delegate(".delete", "click", function () { if (typeof exeDelete == "function") { exeDelete(); } });
+                    popdom.delegate(".cancel", "click", function () { if (typeof exeCancel == "function") { exeCancel(); } });
+                };
+
+                create(); //new 对象后创建窗体
+            }
+
+            window.UI = $.extend(window.UI, { prompt: prompt, promptPage: promptPage });
+        })();
+
+        (function(){
+            function drag(id,moveBox){
+                var box = $(id)[0];
+                var moveBox = $(moveBox)[0];
+                
+                box.onmousedown = function(e){
+                    var disX=e.clientX-moveBox.offsetLeft;
+                    var disY=e.clientY-moveBox.offsetTop;
+                    document.onmousemove = function(e){
+                        e.preventDefault();
+                        var l=e.clientX-disX;
+                        var t=e.clientY-disY;
+                        if(l<0){
+                            l=0;
+                        }else if(l>document.documentElement.clientWidth-moveBox.offsetWidth){
+                            l = document.documentElement.clientWidth-moveBox.offsetWidth;
+                        }
+                        if(t<0){
+                            t=0;
+                        }else if(t>document.documentElement.clientHeight-moveBox.offsetHeight){
+                            t = document.documentElement.clientHeight-moveBox.offsetHeight;
+                        }
+        
+                        moveBox.style.margin = "0";
+                        moveBox.style.left=l+'px';
+                        moveBox.style.top=t+'px';
+                        return false;
+                    }
+                    document.onmouseup = function(){
+                        document.onmousemove = null;    
+                        document.onmouseup = null;
+                        return false;
+                    }
+                    return false;
+                }
+            }
+            window.UI = $.extend(window.UI, { drag:drag });
+        })();
+
+    </script>
+</head>
+<body>
+    
+</body>
+    
+    <div id="pageBox"></div><br>
+
+    <div class="page-box"></div><br>
+
+    <div id="pageBox1"></div><br>
+
+    <script>
+        //--------------以下实例测试------------
+        var pg = new Controls.Paging("#pageBox", 1, 1, 1);
+        console.log(pg);
+        pg.show();
+        pg.change(callback);
+
+        var pg1 = new Controls.Paging(".page-box");
+        pg1.p = 2;
+        pg1.psize = 10;
+        pg1.recordCount = 101;
+        pg1.show();
+        pg1.change(callback);
+
+        var pg2 = new Controls.Paging("#pageBox1", 100, 10);
+        pg2.show();
+        pg2.change(callback);
+
+        function callback(obj) {
+            alert(obj.p);
+        };
+    </script>
+</html>
