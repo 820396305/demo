@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Track</title>
+<style type="text/css">
+	html{height:100%}
+	body{height:100%;margin:0px;padding:0px}
+	#controller{width:100%; border-bottom:3px outset; height:30px; filter:alpha(Opacity=100); -moz-opacity:1; opacity:1; z-index:10000; background-color:lightblue;}
+	#container{height:100%}
+</style>  
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=D2b4558ebed15e52558c6a766c35ee73"></script>
+<script type="text/javascript">
+//获取所有点的坐标
+var points = [
+//	new BMap.Point(116.467941, 39.955101), new BMap.Point(116.468156,39.94697),
+//	new BMap.Point(116.468156, 39.94697), new BMap.Point(116.456874, 39.94708),
+//	new BMap.Point(116.456874, 39.94708), new BMap.Point(116.456945, 39.953275),
+//	new BMap.Point(116.456945, 39.953275), new BMap.Point(116.467941, 39.955101),
+];
+var p = [
+	new BMap.Point(116.467941, 39.955101), new BMap.Point(116.468156,39.94697),
+	new BMap.Point(116.468156, 39.94697), new BMap.Point(116.456874, 39.94708),
+	new BMap.Point(116.456874, 39.94708), new BMap.Point(116.456945, 39.953275),
+	new BMap.Point(116.456945, 39.953275), new BMap.Point(116.467941, 39.955101),
+];
+
+function ObjDeclar() {
+    var map;   //百度地图对象
+    var car;   //汽车图标
+    var label; //信息标签
+    var centerPoint;
+    var driving;
+    var point;
+    var from;   //始点
+    var to;     //终点
+    var timer;     //定时器
+    var index = 0; //记录播放到第几个point
+    var count = 0; //
+    var followChk, playBtn, pauseBtn, resetBtn; //几个控制按钮
+    var i = 2;
+}
+
+
+function init() {
+    ObjDeclar();
+    initBMap();
+    initCar();//初始化小车子
+    updateRealTrace(p[0],p[3]);
+    
+}
+function updateData() {
+    if (count < p.length) {
+        updateRealTrace(p[i], p[i+1]);
+        i++;
+        count += 2;
+       
+    }else {
+        window.clearTimeout(timer);
+    }
+}
+
+function updateRealTrace(from, to){
+    getRoute(from, to);
+}
+function getRoute(from, to){
+	//通过DrivingRoute获取一条路线的point
+	index = 0;
+	driving = new BMap.DrivingRoute(map);
+	driving.search(from,to);
+	driving.setSearchCompleteCallback(function() {
+		//得到路线上的所有point
+		points = driving.getResults().getPlan(0).getRoute(0).getPath();
+		//画面移动到起点和终点的中间
+		centerPoint = new BMap.Point((points[0].lng + points[points.length - 1].lng) / 2, (points[0].lat + points[points.length - 1].lat) / 2);
+		map.panTo(centerPoint);
+		//连接所有点
+		map.addOverlay(new BMap.Polyline(points, {strokeColor: "black", strokeWeight: 5, strokeOpacity: 1}));
+		//点亮操作按钮
+		playBtn.disabled = false;
+		resetBtn.disabled = false;
+		carMove();//小车移动
+	});
+}
+
+function initCar() {
+    label = new BMap.Label("", {offset: new BMap.Size(-20, -20)});
+    car = new BMap.Marker(p[0]);
+	car.setLabel(label);
+	map.addOverlay(car);
+}
+
+function carMove() {
+	playBtn.disabled = true;
+	pauseBtn.disabled = false;
+	
+    point = points[index];
+	if(index > 0) {
+		map.addOverlay(new BMap.Polyline([points[index - 1], point], {strokeColor: "red", strokeWeight: 1, strokeOpacity: 1}));
+	}
+	
+	//label.setContent("经度: " + point.lng + "<br>纬度: " + point.lat);
+	car.setPosition(point);
+	index++;
+	if(followChk.checked) {
+		map.panTo(point);
+	}
+	if(index < points.length) {
+	    //很关键，小车移动的根本原因，小心index
+		timer = window.setTimeout("carMove(index)", 200);
+	}
+	
+	if(!timer){
+	    //updateData();
+	}
+	//} else {
+		//playBtn.disabled = true;
+		//pauseBtn.disabled = true;
+		//map.panTo(point);
+		//updateData();
+	//}
+}
+
+
+function initBMap() {
+    //获取按钮的引用
+	followChk = document.getElementById("follow");
+	playBtn = document.getElementById("play");
+	pauseBtn = document.getElementById("pause");
+	resetBtn = document.getElementById("reset");
+
+	//初始化地图,选取第一个点为起始点
+	map = new BMap.Map("container");
+	map.centerAndZoom(p[0], 15);
+	map.enableScrollWheelZoom();
+	map.addControl(new BMap.NavigationControl());
+	map.addControl(new BMap.ScaleControl());
+	map.addControl(new BMap.OverviewMapControl({isOpen: true}));
+}
+
+
+
+function pause() {
+	playBtn.disabled = false;
+	pauseBtn.disabled = true;
+	
+	if(timer) {
+		window.clearTimeout(timer);
+	}
+}
+
+function reset() {
+	followChk.checked = false;
+	playBtn.disabled = false;
+	pauseBtn.disabled = true;
+	
+	if(timer) {
+		window.clearTimeout(timer);
+	}
+	index = 0;
+	car.setPosition(points[0]);
+	map.panTo(centerPoint);
+}
+</script>
+</head>  
+   
+<body onload="init();">  
+	<div id="controller" align="center">
+		<input id="follow" type="checkbox"><span style="font-size:12px;">画面跟随</span></input>
+		<input id="play" type="button" value="播放" onclick="play();"  />
+		<input id="pause" type="button" value="暂停" onclick="pause();"  />
+		<input id="getGps" type="button" value="获取数据" onclick="getGps();"  />
+		<input id="reset" type="button" value="重置" onclick="reset()"  />
+	</div>
+	<div id="container"></div>
+</body>  
+</html>
