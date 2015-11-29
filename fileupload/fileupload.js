@@ -37,16 +37,30 @@
 			}
 			return -1;
 		}
-		this.getFiles = function(){
-			return _files;
-		};
-		this.size = function(){
-			var sum = 0;
-			for(var i=0;i<_files.length;i++){
-				sum += _files[i].size;
-			}
-			return sum;
-		}
+		this.getFiles = function(filter){
+            if(filter){     //过滤错误文件
+                var _filesArr = [];
+                for(var i= 0;i<_files.length;i++){
+                     !_files[i].error && _filesArr.push(_files[i]);
+                }
+                return _filesArr;
+            }
+            return _files;
+        };
+        this.getSize = function(filter){
+            var sum = 0;
+            if(filter){     //过滤错误文件
+                for(var i=0;i<_files.length;i++){
+                    sum += _files[i].error ? 0 : _files[i].size;
+                }
+            }else{
+                for(var i=0;i<_files.length;i++){
+                    sum += _files[i].size;
+                }
+            }
+            return sum;
+        }
+		
 		this.upload = function(url,name,args,callback,failcallback){
 			name = name || "upload[]";
 			if(_files.length<=0){ failcallback && failcallback({status:-1,statusText:"未选择文件"});return; }
@@ -62,13 +76,13 @@
                 processData : false, 
                 contentType : false,
                 beforeSend:function(xhr){
-                	xhr.upload.onprogress = function (event) {
-						if (event.lengthComputable) {
-							var complete = (event.loaded / event.total * 100 | 0);
-							console.log(complete);
-							//progress.value = progress.innerHTML = complete;
-						}
-					}
+     //            	xhr.upload.onprogress = function (event) {
+					// 	if (event.lengthComputable) {
+					// 		var complete = (event.loaded / event.total * 100 | 0);
+					// 		console.log(complete);
+					// 		//progress.value = progress.innerHTML = complete;
+					// 	}
+					// }
                 },
                 success : function(rs) {
                 	callback && callback(rs);
@@ -82,9 +96,44 @@
 			_files = [];
 			callback && callback();
 		};
-		this.change = function(callback,filter){
+		this.change = function(callback,filter,fileEle){
 			this.dom.onchange = function(){
 				var files = _this.dom.files;
+				_change(files);
+			};
+			if(fileEle){
+				//拖动上传
+				fileEle.ondragenter=function(e) {
+					e.preventDefault();
+				}
+				fileEle.ondragover=function(e) {
+					e.preventDefault();
+				}
+				fileEle.ondragleave=function(e) {
+					e.preventDefault();
+				}
+				fileEle.ondrop=function(e) {
+					var files = e.dataTransfer.files;
+					_change(files);
+					e.preventDefault();
+				}
+				//粘贴上传
+				fileEle.onpaste = function(e){
+					var clipboard = e.clipboardData;
+				    // 有无内容
+				    if(!clipboard.items || !clipboard.items.length){
+				        return;
+				    }
+				    var temp = clipboard.items[0];
+				    if(temp.kind === 'file' && temp.type.indexOf('image') === 0){
+				        var files = temp.getAsFile();
+				        files.name = 'untitled_'+Date.now()+'.'+temp.type.split('/')[1];
+						_change([files]);
+				    }
+				}
+			}
+
+			function _change(files){
 				if(files.length){
 					for(var ig=0;ig<files.length;ig++){
 						var errormsg = [];
@@ -116,7 +165,7 @@
 					}
 					_this.dom.value = '';
 				}
-			};
+			}
 		};
 		this.chooseImage = function(){
 			this.chooseFile("image/*");
@@ -156,6 +205,49 @@
 				img = null;
 			}
 			return img;
+		}
+		this.getText = function(file,callback){
+			file = file.index ? file : this.getFile(file);
+			if(!file || !window.FileReader){
+				callback && callback();
+			}
+			var reader = new FileReader();
+			reader.onload = function(){
+				callback && callback(reader);
+            };
+           	reader.readAsText(file);
+		}
+		this.getImageSrc = function(file,callback){
+			file = file.index ? file : this.getFile(file);
+			if(!file || file.type.indexOf('image')!=0){
+				callback(null);
+			}
+			if(window.URL){
+				callback(window.URL.createObjectURL(file));
+			}else if(window.FileReader){
+				var reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = function(e){
+					callback(this.result);
+				}
+			}else{
+				callback(null);
+			}
+		}
+		this.getImageBase64 = function(file,callback){
+			file = file.index ? file : this.getFile(file);
+			if(!file || file.type.indexOf('image')!=0){
+				return null;
+			}
+			if(window.FileReader){
+				var reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = function(e){
+					callback(this.result);
+				}
+			}else{
+				return null;
+			}
 		}
 	}
 	window.IO = $.extend(window.IO,{fileUpload:fileUpload});

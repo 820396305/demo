@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>文件上传demo</title>
-<script src="jquery-2.1.1.min.js"></script>
+<script src="../static/js/jquery-2.1.1.min.js"></script>
 <script src="fileupload.js"></script>
+<script src="exif.min.js"></script>
 <style>
 	body{font-size:12px;}
 	.file-items{list-style:none;padding:10px;}
@@ -55,8 +56,36 @@
 		console.log(up.getFiles());
 		var img = up.getImage(file,"img");
 		img && box.appendChild(img);
-		addFile(file,errormsg)
+		addFile(file,errormsg);
+		getImageExif(file,function(rs){
+			console.log(rs);
+		});
+	    
 	},{maxsize:2*1024*1024,type:['image','doc','txt']});
+
+	function getImageExif(file,callback){
+		if(!file){
+			callback && callback(null);
+			return;
+		}
+		EXIF.getData(file, function() {
+			var obj ={name:file.name || '',photo_at:'',latitude:'',longitude:''};
+			var lngExif = this.exifdata.GPSLongitude;
+			var latExif = this.exifdata.GPSLatitude;
+			obj.photo_at = this.exifdata.DateTimeOriginal;
+			if(!obj.photo_at){
+				callback && callback(null);
+				return;
+			}
+			if(!lngExif || !latExif){
+				callback && callback(null);
+				return;
+			}
+	        obj.longitude = lngExif[0].numerator/lngExif[0].denominator+(lngExif[1].numerator/lngExif[1].denominator)/60+(lngExif[2].numerator/lngExif[2].denominator)/3600;
+	        obj.latitude = latExif[0].numerator/latExif[0].denominator+(latExif[1].numerator/latExif[1].denominator)/60+(latExif[2].numerator/lngExif[2].denominator)/3600;
+	        callback &&　callback(obj);
+	    });
+	}
 	
 	function addFile(file,msg){
 		if(msg){
