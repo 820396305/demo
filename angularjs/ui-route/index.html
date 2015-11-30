@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>{{ title || 'router测试' }}</title>
+	<link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+	<script src="javascripts/angular.min.js"></script>
+	<script src="javascripts/angular-ui-router.min.js"></script>
+	<script src="javascripts/index.js"></script>
+	<style>
+		html,body{height:100%;display:flex;flex-direction:column;}
+	</style>
+</head>
+<body>
+	<div ui-view style="flex:1;display:flex;flex-direction:column;"></div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ng-bind</title>
+	<script src="../public/javascripts/angular.min.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" type="text/css" href="../public/stylesheets/bootstrap.min.css">
+</head>
+<body ng-app>
+	<form role="form">
+		<div class="form-group">
+			<div class="row">
+				<label class="col-md-2 control-label">输入：</label>
+				<div class="col-md-10">
+					<input type="text" class="form-control" ng-model="userName">
+				</div>
+			</div>
+		</div>
+	</form>
+	
+	<div ng-bind="userName">123123</div>
+</body>
+</html>

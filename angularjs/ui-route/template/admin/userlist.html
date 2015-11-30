@@ -1,0 +1,19 @@
+<table class="table">
+	<thead>
+		<tr>
+			<td>用户名</td>
+			<td>密码</td>
+			<td>年龄</td>
+			<td>操作</td>
+		</tr>
+	</thead>
+<!-- 	<tbody ng-controller="userListCtrl"> -->
+	<tbody>
+		<tr ng-repeat="user in users">
+			<td>{{user.userName}}</td>
+			<td>{{user.userPwd}}</td>
+			<td>{{user.userAge}}</td>
+			<td><a ng-href="/demo/angularjs/ui-route/index.html#/admin/detail/{{user.userId}}">查看详情</a></td>
+		</tr>
+	</tbody>
+</table>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>css3 filter图片处理效果</title>
+	<style>
+		html,body{margin:0;padding:0;}
+		.grayscale{-webkit-filter:grayscale(1);}  /*灰度*/
+		.sepia{-webkit-filter:sepia(1);}
+		.saturate{-webkit-filter:saturate(0.5);}  /*饱和度*/
+		.hue-rotate{-webkit-filter:hue-rotate(90deg);} /* 色相 */
+		.invert{-webkit-filter:invert(1);}  /*反相*/
+		.opacity{-webkit-filter:opacity(0.5);}  /*透明度*/
+		.brightness{-webkit-filter:brightness(.5);}  /*亮度*/
+		.contrast{-webkit-filter:contrast(2);} /*对比度*/
+		.blur{-webkit-filter:blur(3px);}   /*模糊*/
+		.drop-shadow{-webkit-filter:drop-shadow(5px 5px 5px #ccc);}
+
+		
+		.blur {	
+		    filter: url(blur.svg#blur); /* FireFox, Chrome, Opera */
+		    -webkit-filter: blur(3px); /* Chrome, Opera */
+		       -moz-filter: blur(3px);
+		        -ms-filter: blur(3px);    
+		            filter: blur(3px);
+		    filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=3, MakeShadow=false); /* IE6~IE9 */
+		}
+
+	</style>
+</head>
+<body>
+ <!-- http://jsfiddle.net/w3cplus/wThjx/ -->
+	<img class="normal" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+	<img class="grayscale" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+	<img class="sepia" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+	<img class="saturate" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+	<img class="hue-rotate" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+	<img class="invert" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+	<img class="opacity" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+	<img class="brightness" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+	<img class="contrast" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+	<img class="blur" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+	<img class="drop-shadow" width="128" height="128" alt="HTML5 Logo" src="http://www.w3cplus.com/sites/default/files/filter.jpg" />
+</body>
+</html>

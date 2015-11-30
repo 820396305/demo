@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ngControl</title>
+	<script src="../public/javascripts/angular.min.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" type="text/css" href="../public/stylesheets/bootstrap.min.css">
+</head>
+<body ng-app="myApp">
+
+	现在是 {{ 1447562269625 | date:'yyyy-MM-dd hh:mm:ss.sss'  }}
+
+	<div ng-controller="userCtrl">
+		userName:<input type="text" ng-model="user.userName"><br>
+		userPwd:<input type="password" ng-model="user.userPwd"><br>
+		<button  class="btn btn-primary" ng-click="">提交</button>
+		userName:{{user.userName}},userPwd:{{user.userPwd}}
+	</div>
+	<br>
+	<div ng-controller="calCtrl">
+		price: <input type="number" ng-model="goods.price"><br>
+		number:<input type="number" ng-model="goods.number"><br>
+		总计：{{ goods.price * goods.number }}
+	</div>
+
+	<div ng-controller="repeatCtrl">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<td>用户名</td>
+					<td>密码</td>
+					<td>年龄</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="user in users">
+					<td ng-bind="user.userName"></td>
+					<td>{{user.userPwd}}</td>
+					<td>{{user.userAge}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<br>
+	<div ng-controller="fnCtrl">
+		price: <input type="number" ng-model="goods.price"><br>
+		number:<input type="number" ng-model="goods.number"><br>
+		总计：{{ calcFn() }}
+	</div>
+	<br>
+
+	<div ng-controller="filterCtrl">
+		过滤：<input type="text" ng-model="filter_name">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<td>用户名</td>
+					<td>密码</td>
+					<td>年龄</td>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- 排序 orderBy:'-root'从下到小 , orderBy:'root'从小到大 -->
+				<tr ng-repeat="user in users | filter:filter_name | orderBy:'-root'">   
+					<td ng-bind="user.userName"></td>
+					<td>{{user.userPwd}}</td>
+					<td>{{user.userAge}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<br>
+	
+	<div ng-controller="httpCtrl">
+		过滤：<input type="text" ng-model="filter_name">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<td>city</td>
+					<td>country</td>
+					<td>name</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="info in infos | filter:filter_name">   
+					<td ng-bind="$index + 1"></td>
+					<td ng-bind="$odd"></td>
+					<td ng-bind="info.City"></td>
+					<td>{{info.Country | uppercase }}</td>   <!-- 	 -->
+					<td>{{info.Name}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<br>
+
+</body>
+<script>
+	var app = angular.module('myApp',[]);
+	app.controller('userCtrl',function($scope){
+		$scope.user = {userName:'xiaoming',userPwd:'123456'};
+	});
+	app.controller('calCtrl',function($scope){
+		$scope.goods = {price:3,number:5};
+	});
+	app.controller('repeatCtrl',function($scope){
+		$scope.users = [
+			{userName:'max',root:5,userPwd:'123456',userAge:20},
+			{userName:'admin',root:10},
+			{userName:'jixiang',root:2,userPwd:'123456',userAge:20,userImage:'/public/images/default_image.png'}
+		];
+	});	
+
+	app.controller('fnCtrl',function($scope){
+		$scope.goods = {price:3,number:5};
+		$scope.calcFn = function(){
+			return $scope.goods.price * $scope.goods.number;
+		}
+	});
+
+	app.controller('filterCtrl',function($scope){
+		$scope.users = [
+			{userName:'max',root:5,userPwd:'123456',userAge:20},
+			{userName:'admin',root:10},
+			{userName:'jixiang',root:2,userPwd:'123456',userAge:20,userImage:'/public/images/default_image.png'}
+		];
+	});
+
+	app.controller('httpCtrl',function($scope,$http){
+		$http.post('demo.json').success(function(rs){
+			$scope.infos = rs.records;
+		}).error(function(rs){
+
+		});
+	});
+</script>
+</html>

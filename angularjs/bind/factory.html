@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ng service</title>
+	<script src="../public/javascripts/angular.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body ng-app="app">
+
+<div ng-controller="ctrl_01">
+	<input type="text" ng-model="data.message">
+	<div>{{data.message}}</div>
+</div>
+
+<div ng-controller="ctrl_02">
+	<input type="text" ng-model="data.message">
+	<div>{{data.message}}</div>
+</div>
+
+<script>
+	var app = angular.module('app',[]);
+	//factory  service  provider 区别示例
+	
+	app.factory('user',function(){
+		return {message:'this just a test ,dont mind'};
+	})
+
+	/*app.service('user',function($http){
+		this.message = 'this just a test, dont mind.';
+	});*/
+
+/*
+	不清楚
+	app.provider('user',function(){
+		this.message = 'this just a test, dont mind.';
+	});*/
+
+	app.controller('ctrl_01',function($scope,user){
+		$scope.data = user;
+	})
+	app.controller('ctrl_02',function($scope,user){
+		$scope.data = user;
+		console.log(user);
+	})
+</script>
+</body>
+</html>

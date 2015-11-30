@@ -1,0 +1,6 @@
+[
+	{"userId":1,"userName":"xiaoming","userPwd":"234567","userAge":20},
+	{"userId":2,"userName":"xiaohong","userPwd":"123456","userAge":30},
+	{"userId":3,"userName":"xiaogang","userPwd":"456789","userAge":16},
+	{"userId":4,"userName":"xiaozhi","userPwd":"345678","userAge":18}
+]

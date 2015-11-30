@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ng form测试</title>
+	<script src="../public/javascripts/angular.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body ng-app="app">
+
+<div ng-controller="formCtrl">
+	<form>
+		userName： <input type="text" name="userName" ng-model="formData.userName"><br>
+		userPwd : <input type="password" name="userPwd" ng-model="formData.userPwd"><br>
+		<label><input type="checkbox" ng-model="formData.remeberMe">记住我</label><br>
+		<input type="submit" value="登陆">
+		<input type="button" value="reset" ng-click="reset()">
+		<input type="button" value="输出" ng-click="console()">
+	</form>
+</div>
+
+<script>
+	var app = angular.module('app',[]);
+	app.controller('formCtrl',function($scope){
+		$scope.formData = {userName:'max',userPwd:'12345',remeberMe:true};
+		$scope.reset = function(){
+			$scope.formData = {userName:'max',userPwd:'12345',remeberMe:true};
+		}
+		$scope.console = function(){
+			console.log($scope.formData);
+		}
+	})	
+</script>
+</body>
+</html>

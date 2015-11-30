@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ng form测试</title>
+	<script src="../public/javascripts/angular.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body ng-app="app">
+
+	{{ '吉祥' | maxFilter:'参数' }}
+	<br><br><br>
+	<div ng-controller="filterCtrl">
+		<table>
+			<thead>
+				<tr>
+					<td>编号</td>
+					<td>姓名</td>
+					<td>密码</td>
+					<td>年龄</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="user in users | orderBy:'userAge' | mxFilter">
+					<td ng-bind="$index+1"></td>
+					<td>{{user.userName}}</td>
+					<td>{{users[$index].userPwd}}</td>
+					<td>{{user.userAge}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+<script>
+	var app = angular.module('app',[]);
+	app.filter('maxFilter',function(){
+		return function(item,arg){
+			console.log(item,arg);
+			return item + '自定义过滤器' + arg;
+		}
+	});
+	app.controller('filterCtrl',function($scope){
+		$scope.users = [
+			{userName:'max',userPwd:'12345',userAge:20},
+			{userName:'admin',userPwd:'0987',userAge:28},
+			{userName:'jixiang',userPwd:'12345',userAge:18}
+		];
+	});
+
+	app.filter('mxFilter',function(){
+		return function(item){
+			console.log(item);
+			return item;
+		};
+	})
+</script>
+</body>
+</html>
