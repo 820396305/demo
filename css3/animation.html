@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>css3 animation</title>
+	<style>
+		.hotman{
+			width:160px;height:120px;background:url(http://7xoxz4.com1.z0.glb.clouddn.com/hotman.png) no-repeat;
+			/*
+				因为图片是由182张160*120的小图合并而成.
+				因此只要只需要走181步就完成了整个动画，
+				最后在keyframes的100%处调用最后一张图片的位置即可。
+				动画名称 dajia
+				动画完成时间 20s
+				步数181
+				动画循环次数 1
+				动画延时  2s(后动画)
+			*/		
+			animation:dajia 20s steps(181) 1 2s forwards; 
+		}
+		.hotman:hover{
+			animation-play-state:paused;
+		}
+		@keyframes dajia{
+			100%{ background-position:0 -21720px;}
+		}
+	</style>
+</head>
+<body>
+	GIF原图：<br>
+	<img src="http://7xoxz4.com1.z0.glb.clouddn.com/hotman.gif">
+	<hr>
+	css帧动画(hover后暂停动画)：
+	<div class="hotman"></div>
+</body>
+</html>
