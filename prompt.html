@@ -29,8 +29,7 @@
             //默认
             var defaultOptions = {
                 title: "",
-                html: "",
-                url: "",
+                html: "", //可以为html碎片或url
                 buttons: []
             }
             function prompt(options) {
@@ -48,29 +47,11 @@
                 return p;
             }
 
-            function promptPage(title, url) {
-                var options = {
-                    title: title.toString(),
-                    url: url,
-                    buttons: arguments[2] || [],
-                    width: arguments[3] || 600,
-                    height: arguments[4] || 400
-                }
-                //----以上将参数均转换成统一对象形式---
-
-                var p = new popup(options);
-                return p;
-            }
-
             //
             function popup(options) {
                 var popupDom = null;
-                var exeConfirm, exeSave, exeDelete, exeCancel, exeClose;
+                var exeClose;
                 this.onClose = function (callback) { exeClose = callback; };
-                this.onConfirm = function (callback) { exeConfirm = callback; };
-                this.onCancel = function (callback) { exeCancel = callback; };
-                this.onSave = function (callback) { exeSave = callback; };
-                this.onDelete = function (callback) { exeDelete = callback; };
 
                 var self = this;
                 //显示
@@ -98,37 +79,30 @@
                     var html = '<div class="popup-box"><div class="layer"></div><div class="popup" id="popup_' + index + '"><div class="title"><div class="name fl">';
                     html += options.title;
                     html += '</div><div class="close fr"></div></div><div class="main">';
-                    if (options.html != null && options.html != "") {
-                        html += options.html;
-                    } else if (options.url != null && options.url != "") {
-                        var width = options.width || 600;
-                        var height = options.height || 400;
-                        html += '<iframe src="' + options.url + '" width="' + width + '" height="' + height + '" style="border:0;" ></iframe>';
-                    } else {
-
-                    }
+                    // if (options.html) {
+                    //     html += options.html;
+                    // }
                     html += '</div>';
                     if (options.buttons && options.buttons instanceof Array && options.buttons.length > 0) {
                         html += '<div class="buttons box">';
-                        for (var i = 0; i < options.buttons.length; i++) {
-                            if (options.buttons[i] == "confirm") {
-                                html += '<div class="button confirm inline">确认</div>';
-                            } else if (options.buttons[i] == "save") {
-                                html += '<div class="button save inline">保存</div>';
-                            } else if (options.buttons[i] == "cancel") {
-                                html += '<div class="button cancel inline">取消</div>';
-                            } else if (options.buttons[i] == "delete") {
-                                html += '<div class="button delete inline">删除</div>';
-                            }
+                        for(var btn in options.buttons){
+                            html += '<div class="button" data-click="'+btn+'">'+(options.buttons[btn].name || '按钮')+'</div>';
                         }
                         html += '</div>';
                     }
                     html += '</div></div>';
-
-                    $("body").append(html);
+                    var bufferDom = $(html);
+                    if (/\.html$/.test(options.html.trim())) {
+                        bufferDom.find('.main').load(options.html,function(){
+                            self.resize();
+                        });
+                    }else{
+                        bufferDom.find('.main').html(options.html);
+                    }
+                    $("body").append(bufferDom);
                     popupDom = $("#popup_" + index);
                     //居中
-                    popupDom.css("width",popupDom.width()+20);
+                    popupDom.css("width",popupDom.width());
                     autosize(popupDom);
                     //顶层
                     $("#popup_" + index).siblings(".layer").css("z-index", 1000 + showindex);
@@ -140,7 +114,7 @@
                        autosize(popupDom);
                     });
                     index++; showindex += 2;
-                    new window.UI.drag('#popup_'+(index-1)+' .title','#popup_'+(index-1));
+                    new window.UI.drag($('#popup_'+(index-1)+' .title')[0],$('#popup_'+(index-1))[0]);
                 }
                 function autosize(dom){
                     var CHeight = document.documentElement.clientHeight,
@@ -152,13 +126,16 @@
                 }
                 //绑定各种事件
                 var bindEventListener = function (popdom) {
-                    popdom.undelegate(".close", "click");
-                    popdom.delegate(".close", "click", function () {
-                        //self.hide();      //多窗口，重叠问题
+                    popdom.find('.title>.close').on( "click",function () {
                         self.close();
                     });
-                    $(document).undelegate("body", "keydown");
-                    $(document).delegate("body", "keydown", function (e) {
+                    popdom.find('.buttons>.button').on('click',function(e){
+                        var btnObj = options.buttons[e.target.dataset.click];
+                        btnObj && btnObj.onclick && btnObj.onclick();
+                    });
+                    //按下ESC键关闭最上层弹框
+                    $(document).off("keydown");
+                    $(document).on("keydown",function (e) {
                         if (e.keyCode == 27) {      //按下 ESC 键
                             if (index - 1 >= 1) {
                                 var topPopup = null, maxindex = -1;
@@ -169,27 +146,17 @@
                                 });
                                 if (topPopup != null) { topPopup.find(".close").trigger("click"); }
                             }
-
                         }
                     });
-                    popdom.undelegate(".confirm,.save,.delete,.cancel", "click");
-                    popdom.delegate(".confirm", "click", function () { if (typeof exeConfirm == "function") { exeConfirm(); } });
-                    popdom.delegate(".save", "click", function () { if (typeof exeSave == "function") { exeSave(); } });
-                    popdom.delegate(".delete", "click", function () { if (typeof exeDelete == "function") { exeDelete(); } });
-                    popdom.delegate(".cancel", "click", function () { if (typeof exeCancel == "function") { exeCancel(); } });
                 };
-
                 create(); //new 对象后创建窗体
             }
 
-            window.UI = $.extend(window.UI, { prompt: prompt, promptPage: promptPage });
+            window.UI = $.extend(window.UI, { prompt: prompt});
         })();
 
         (function(){
-            function drag(id,moveBox){
-                var box = $(id)[0];
-                var moveBox = $(moveBox)[0];
-                
+            function drag(box,moveBox){                
                 box.onmousedown = function(e){
                     var disX=e.clientX-moveBox.offsetLeft;
                     var disY=e.clientY-moveBox.offsetTop;
@@ -207,7 +174,6 @@
                         }else if(t>document.documentElement.clientHeight-moveBox.offsetHeight){
                             t = document.documentElement.clientHeight-moveBox.offsetHeight;
                         }
-        
                         moveBox.style.margin = "0";
                         moveBox.style.left=l+'px';
                         moveBox.style.top=t+'px';
@@ -230,19 +196,36 @@
     
 </body>
     
-    <button id="btn1">弹框</button>
-
+    <button id="btn1">url弹框</button>
+    <button id="btn2">html弹框</button>
+    <div style="background:#678990;height:200px;width:200px;"></div>
     <script>
         //--------------以下实例测试------------
        
 
         $("#btn1").click(function () {
-            var textBox = window.UI.prompt("小明", "<h1>Good Afternoon</h1>", ["confirm","cancel"]);
-            console.info(textBox);
-            textBox.onConfirm(function () {
-                alert("您点击了确认按钮，会调用close方法退出");
-                textBox.close();
+            var textBox = window.UI.prompt("小明", "prompt.html",[
+                {name:'确认',onclick:function(){
+                    alert('good man');
+                }},
+                {name:'关闭',onclick:function(){
+                    textBox.close();
+                }}
+            ]);
+            textBox.onClose(function(){
+                alert("文本窗口关闭");    
             });
+        });
+
+        $("#btn2").click(function () {
+            var textBox = window.UI.prompt("小明", '<div style="width:500px;"><ul><li>菜单1<ul><li>子菜单1</li><li>子菜单2</li></ul></li><li>菜单2<ul><li>子菜单1</li><li>子菜单2</li></ul></li><li>菜单3</li></ul></div>',[
+                {name:'自定义按钮',onclick:function(){
+                    alert('good man');
+                }},
+                {name:'关闭',onclick:function(){
+                    textBox.close();
+                }}
+            ]);
             textBox.onClose(function(){
                 alert("文本窗口关闭");    
             });
