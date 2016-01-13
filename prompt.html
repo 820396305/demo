@@ -7,22 +7,17 @@
     
     <style>
 
-        .button{
-    width: 98px;
-    height: 16px;
-    border: 1px solid #D6D6D6;
-}
-        /*prompt*/
+
+         /*prompt*/
         .layer{position:fixed;left:0;top:0;background:rgba(0,0,0,0.3);width:100%;height:100%;z-index:100;}
-        .popup{min-width:300px;border:1px solid #9EBEE5;background:#fff;z-index:11;position:fixed;left:50%;top:50%;padding:2px;}
-        .popup .title{width:100%;height:26px;line-height:26px;text-indent:0.8em;color:white;background:rgb(72,148,213);cursor:move;}
-        .popup .close{background:url(/theme/static/images/window_close.png) left top no-repeat;width:15px;height:15px;margin:5px 7px 0 0;}
-        .popup .buttons div{margin:5px 10px;}
-        .popup .main{padding:0px;min-height:20px;overflow-y:auto;overflow-x:hidden;}
-        .popup .close{cursor:pointer;}
-        .popup .content{padding:15px;}
-        .popup .buttons{margin:10px 0px 16px 0;}
-        .popup .buttons .button{margin:0 8px 0 15px;text-align:center;cursor:pointer;}
+        .popup{min-width:300px;background:#fff;z-index:11;position:fixed;left:50%;top:50%;box-shadow:0 0 10px #888;}
+        .popup>.title{width:100%;height:60px;line-height:60px;text-align:center;color:white;font-size:18px;background:#007ae2;cursor:move;position:relative;}
+        .popup>.main{overflow-y:auto;overflow-x:hidden;}
+        .popup>.title>.close{height:60px;width:60px;position:absolute;right:0;top:0;cursor:pointer;}
+        .popup>.title>.close:after{content:'×';display:block;text-align:center;color:white;font-size:40px;line-height:54px;}
+        .popup>.title>.close:hover{background:#008ae2;}
+        .popup>.buttons{display:flex;}
+        .popup>.buttons .button{flex:1;text-align:center;cursor:pointer;height:40px;line-height:40px;box-shadow:0 0 1px #ccc;}
     </style>
 
     <script>
@@ -104,7 +99,7 @@
                     html += options.title;
                     html += '</div><div class="close fr"></div></div><div class="main">';
                     if (options.html != null && options.html != "") {
-                        html += '<div class="content">' + options.html + '</div>';
+                        html += options.html;
                     } else if (options.url != null && options.url != "") {
                         var width = options.width || 600;
                         var height = options.height || 400;
@@ -154,14 +149,6 @@
                     dom.find(".main").css("max-height",CHeight - 75);
                     dom.css('top',CHeight>PHeight?(CHeight-PHeight)/2:10);
                     dom.css('left',(CWidth-PWidth)/2);
-                }
-
-                //返回窗体里面内容对象
-                this.content = function () {
-                    if (popupDom.find(".content").length != 0) {
-                        return popupDom.find(".content");
-                    }
-                    return null;
                 }
                 //绑定各种事件
                 var bindEventListener = function (popdom) {
@@ -245,22 +232,12 @@
     
     <button id="btn1">弹框</button>
 
-
-    <button id="btn2">iframe 百度</button>
-
     <script>
         //--------------以下实例测试------------
-       var option = {
-            title: "helloworld",
-            //html:"<h1>this is a box</h1>",
-            url: "http://www.baidu.com",
-            buttons: ["confirm", "cancle", "save", "delete"],
-            width: 800,
-            height: 500
-        }
+       
 
         $("#btn1").click(function () {
-            textBox = window.UI.prompt("小明", "<h1>Good Afternoon</h1>", ["confirm"]);
+            var textBox = window.UI.prompt("小明", "<h1>Good Afternoon</h1>", ["confirm","cancel"]);
             console.info(textBox);
             textBox.onConfirm(function () {
                 alert("您点击了确认按钮，会调用close方法退出");
@@ -271,13 +248,5 @@
             });
         });
 
-        $("#btn2").click(function () {
-            textBox = window.UI.prompt(option);
-            textBox.onConfirm(function () {
-                alert("点击了确定，隐藏,3s后出来");
-                textBox.hide();
-                setTimeout(function(){textBox.show();},3000);
-            });
-        });
     </script>
 </html>
