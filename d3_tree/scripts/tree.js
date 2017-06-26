@@ -41,7 +41,7 @@ function drawTree(treeData) {
 
     // Calculate total nodes, max label length
     var totalNodes = 0;
-    var maxLabelLength = 0;
+    var maxLabelLength = 12;
     // panning variables
     var panSpeed = 200;
     var panBoundary = 20; // Within 20px from edges will pan when dragging.
@@ -70,25 +70,26 @@ function drawTree(treeData) {
     }
 
     // A recursive helper function for performing some setup by walking through all nodes
-    function visit(parent, visitFn, childrenFn) {
-      if (!parent) return;
-      visitFn(parent);
-      var children = childrenFn(parent);
-      if (children) {
-        var count = children.length;
-        for (var i = 0; i < count; i++)
-          visit(children[i], visitFn, childrenFn);
-      }
-    }
+    // function visit(parent, visitFn, childrenFn) {
+    //     console.log(parent)
+    //   if (!parent) return;
+    //   visitFn(parent);
+    //   var children = childrenFn(parent);
+    //   if (children) {
+    //     var count = children.length;
+    //     for (var i = 0; i < count; i++)
+    //       visit(children[i], visitFn, childrenFn);
+    //   }
+    // }
 
-    // Call visit function to establish maxLabelLength
-    visit(treeData, function(d) {
-      totalNodes++;
-      // maxLabelLength = Math.max(englishName(d).length, maxLabelLength);
-      maxLabelLength = 12;
-    }, function(d) {
-      return d.children && d.children.length > 0 ? d.children : null;
-    });
+    // // Call visit function to establish maxLabelLength
+    // visit(treeData, function(d) {
+    //   totalNodes++;
+    //   // maxLabelLength = Math.max(englishName(d).length, maxLabelLength);
+    //   maxLabelLength = 12;
+    // }, function(d) {
+    //   return d.children && d.children.length > 0 ? d.children : null;
+    // });
 
     // TODO: Pan function, can be better implemented.
     function pan(domNode, direction) {
@@ -189,13 +190,12 @@ function drawTree(treeData) {
         if (d3.event.defaultPrevented) return; // click suppressed
         // d = toggleChildren(d);
         // update(d);
-        console.log(d)
         var bio = d.name
         var img = d.image || 'images/placeholder.png'
         $("#bio").html("<img src='"+ img + "'>" + bio)
                  .addClass("has-image")
                  .fadeIn("fast");
-        centerNode(d);
+        // centerNode(d);
     }
 
     function update(source) {
@@ -340,6 +340,9 @@ function drawTree(treeData) {
         var nodeUpdate = node.transition()
             .duration(duration)
             .attr("transform", function(d) {
+                if (d.depth > 4) {
+                    d.y -= 30 * (d.depth - 4)
+                }
                 if (vertical)
                   return "translate(" + d.x + "," + d.y + ")";
                 else
@@ -367,9 +370,10 @@ function drawTree(treeData) {
         var link = svgGroup.selectAll("path.link").data(links, function(d) { return d.target.id; });
 
         // Enter any new links at the parent's previous position.
-        link.enter().insert("path", "g")
+        var xxx = link.enter().insert("path", "g")
             .attr("class", "link")
             .style('stroke-width', function(d) {return 3*(maxDepth - d.source.depth) + 'px';})
+            .style('opacity', function(d) {return d.source.depth >= 4 ? 0 : 0.5})
             .attr("d", function(d) {
                 var o = {
                     x: source.x0,
@@ -380,7 +384,6 @@ function drawTree(treeData) {
                     target: o
                 });
             });
-
         // Transition links to their new position.
         link.transition().duration(duration).attr("d", diagonal);
 
@@ -410,7 +413,18 @@ function drawTree(treeData) {
     var svgGroup = baseSvg.append("g");
 
     // Define the root
-    root = treeData;
+    // root = treeData
+    treeData.children.forEach(function(item){
+        item.children.forEach(function(item){
+            item.children.forEach(function(item){
+                item.children[0].children = [item.children[1]]
+                item.children[0].children[0].children = [item.children[2]]
+                item.children.splice(1,2)
+            })
+        })
+    })
+    // console.log(treeData)
+    root = treeData
     root.x0 = viewerHeight / 2;
     root.y0 = 0;
 
