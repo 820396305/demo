@@ -1,37 +1,36 @@
-body {
+body,html{
   margin: 0;
+  height:100%;
+  width:100%;
+  overflow: hidden;
 }
 
-#bio {
+#userinfo {
+	display: none;
   transform: rotate(-90deg);
   position: absolute;
   left: -130px;
   bottom: 50%;
   z-index: 99;
-  font-family: "Georgia";
-  font-size: 18px;
   height: 60px;
   width: 320px;
-  line-height: 1.4;
+  line-height: 24px;
   text-align: justify;
   background:rgba(0,0,0,.8);
   color: white;
-  display: none;
   box-sizing: border-box;
   pointer-events:none;
 }
 
-#bio img {
-  position: absolute;
-  top: 0;
-  left: 0;
+#userinfo #image {
   height: 60px;
   width: 60px;
 }
 
-#bio a {
-  text-decoration: none;
+#userinfo #user-info {
+padding: 6px 10px;
   color: white;
+  font-size:14px;
 }
 
 .node {
@@ -73,3 +72,28 @@ body {
      display: none;
 }
 
+.webkit-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+.webkit-vertical {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+.webkit-center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}

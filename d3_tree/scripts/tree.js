@@ -101,13 +101,13 @@ function drawTree(treeData) {
     // Toggle children on click.
     function click(d) {
         if (d3.event.defaultPrevented) return; // click suppressed
+        d3.event.stopPropagation()
         // update(d);
-        var bio = d.name
         var img = d.image || 'images/placeholder.png'
-        $("#bio").html("<img src='"+ img + "'>" + bio)
-                 .addClass("has-image")
-                 .fadeIn("fast");
-        // centerNode(d);
+        $("#image").attr("src", img)
+        $('#name').text(d.name +'（'+ d.phone +'）')
+        $('#recommend').text('推荐' + (d.recommend_number || 0) + '人')
+        $('#userinfo').fadeIn()
         return false
     }
 
@@ -160,7 +160,7 @@ function drawTree(treeData) {
                 else
                   return "translate(" + source.y0 + "," + source.x0 + ")";
             })
-            .on('click', click);
+            .on('click', click, true);
 
         nodeEnter.append("circle")
                  .attr('class', 'nodeCircle')
@@ -229,25 +229,25 @@ function drawTree(treeData) {
         });
 
         // Update the text to reflect whether node has children or not.
-        node.select('text')
-            .attr("x", function(d) {
-                //return d.children || d._children ? -10 : 10;
-                return -20;
-            })
-            .attr("text-anchor", function(d) {
-                //return d.children || d._children ? "end" : "start";
-                return "end";
-            })
-            .text(function(d) {
-                return d.name;
-            });
+        // node.select('text')
+        //     .attr("x", function(d) {
+        //         //return d.children || d._children ? -10 : 10;
+        //         return -20;
+        //     })
+        //     .attr("text-anchor", function(d) {
+        //         //return d.children || d._children ? "end" : "start";
+        //         return "end";
+        //     })
+        //     .text(function(d) {
+        //         return d.name;
+        //     });
 
         // Change the circle fill depending on whether it has children and is collapsed
-        node.select("circle.nodeCircle")
-            .attr("r", 10)
-            .style("fill", function(d) {
-                return d._children ? "lightsteelblue" : "#fff";
-            });
+        // node.select("circle.nodeCircle")
+        //     .attr("r", 10)
+        //     .style("fill", function(d) {
+        //         return d._children ? "lightsteelblue" : "#fff";
+        //     });
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
@@ -283,7 +283,7 @@ function drawTree(treeData) {
         var link = svgGroup.selectAll("path.link").data(links, function(d) { return d.target.id; });
 
         // Enter any new links at the parent's previous position.
-        var xxx = link.enter().insert("path", "g")
+        link.enter().insert("path", "g")
             .attr("class", "link")
             .style('stroke-width', function(d) {return 3*(maxDepth - d.source.depth) + 'px';})
             .style('opacity', function(d) {return d.source.depth >= 4 ? 0 : 0.5})
@@ -348,7 +348,6 @@ function drawTree(treeData) {
     update(root);
     centerNode(root);
     d3.select('svg').on('click', function(e){
-        console.log(1)
-        return false
+        $('#userinfo').fadeOut()
     })
 };
