@@ -1,39 +1,8 @@
 var jsonPath = "json/" + (location.hash.split('#')[1] || 'demo') + ".json";
 
-var publicTree;
-var running = 1; // number of running asynchronous functions
-
-function parseTree (tree, replace) {
-  if (typeof replace != "undefined") {
-    replace.children = tree.children;
-    parseTree(tree);
-  } else if (tree.source) {
-    running++;
-    d3.json(tree.source, function(error, treeData) {
-      running--;
-      parseTree(treeData, tree);
-    });
-  } else if (tree.children) {
-    $(tree.children).each(function(){
-      parseTree(this);
-    });
-  }
-}
-
 d3.json(jsonPath, function(error, treeData) {
-  publicTree = treeData;
-  parseTree(publicTree);
-  running--;
+    drawTree(treeData);
 });
-
-
-function checkIfDone(){
-  if (running > 0)
-    setTimeout(checkIfDone,100);
-  else
-    drawTree(publicTree);
-}
-checkIfDone();
 
 function drawTree(treeData) {
 
@@ -64,32 +33,6 @@ function drawTree(treeData) {
       else
         return [d.y, d.x];
     });
-
-    function englishName (d) {
-      return d["english-name"] ? d["english-name"] : d.name;
-    }
-
-    // A recursive helper function for performing some setup by walking through all nodes
-    // function visit(parent, visitFn, childrenFn) {
-    //     console.log(parent)
-    //   if (!parent) return;
-    //   visitFn(parent);
-    //   var children = childrenFn(parent);
-    //   if (children) {
-    //     var count = children.length;
-    //     for (var i = 0; i < count; i++)
-    //       visit(children[i], visitFn, childrenFn);
-    //   }
-    // }
-
-    // // Call visit function to establish maxLabelLength
-    // visit(treeData, function(d) {
-    //   totalNodes++;
-    //   // maxLabelLength = Math.max(englishName(d).length, maxLabelLength);
-    //   maxLabelLength = 12;
-    // }, function(d) {
-    //   return d.children && d.children.length > 0 ? d.children : null;
-    // });
 
     // TODO: Pan function, can be better implemented.
     function pan(domNode, direction) {
@@ -132,25 +75,6 @@ function drawTree(treeData) {
         .attr("class", "overlay")
         .call(zoomListener);
 
-
-    // Helper functions for collapsing and expanding nodes.
-
-    function collapse(d) {
-        if (d.children) {
-            d._children = d.children;
-            d._children.forEach(collapse);
-            d.children = null;
-        }
-    }
-
-    function expand(d) {
-        if (d._children) {
-            d.children = d._children;
-            d.children.forEach(expand);
-            d._children = null;
-        }
-    }
-
     var overCircle = function(d) {
         selectedNode = d;
         updateTempConnector();
@@ -173,22 +97,10 @@ function drawTree(treeData) {
         zoomListener.translate([x, y]);
     }
 
-    // Toggle children function
-    function toggleChildren(d) {
-        if (d.children) {
-            d._children = d.children;
-            d.children = null;
-        } else if (d._children) {
-            d.children = d._children;
-            d._children = null;
-        }
-        return d;
-    }
 
     // Toggle children on click.
     function click(d) {
         if (d3.event.defaultPrevented) return; // click suppressed
-        // d = toggleChildren(d);
         // update(d);
         var bio = d.name
         var img = d.image || 'images/placeholder.png'
@@ -196,6 +108,7 @@ function drawTree(treeData) {
                  .addClass("has-image")
                  .fadeIn("fast");
         // centerNode(d);
+        return false
     }
 
     function update(source) {
@@ -262,7 +175,7 @@ function drawTree(treeData) {
              return d.children || d._children ? -18 : 18; })
             .attr("dy", ".35em")
             .attr("text-anchor", "middle")
-            .text(function(d) { return englishName(d); })
+            .text(function(d) { return d.name; })
             .style("fill-opacity", 1);
         } else {
           nodeEnter.append("text")
@@ -275,7 +188,7 @@ function drawTree(treeData) {
                 return "end";
               })
               .text(function(d) {
-                return englishName(d);
+                return d.name;
               })
               .style("fill-opacity", 0);
         }
@@ -312,7 +225,7 @@ function drawTree(treeData) {
             return "images/placeholder.png";
         });
         node.select('image').attr("title", function(d) {
-          return "<strong>" + englishName(d) + "</strong>. " + (d.bio ? d.bio : "");
+          return "<strong>" + d.name + "</strong>. " + (d.bio ? d.bio : "");
         });
 
         // Update the text to reflect whether node has children or not.
@@ -326,7 +239,7 @@ function drawTree(treeData) {
                 return "end";
             })
             .text(function(d) {
-                return englishName(d);
+                return d.name;
             });
 
         // Change the circle fill depending on whether it has children and is collapsed
@@ -415,11 +328,14 @@ function drawTree(treeData) {
     // Define the root
     // root = treeData
     treeData.children.forEach(function(item){
+        item.children.reverse()
         item.children.forEach(function(item){
+            item.children.reverse()
             item.children.forEach(function(item){
                 item.children[0].children = [item.children[1]]
                 item.children[0].children[0].children = [item.children[2]]
                 item.children.splice(1,2)
+                item.children.reverse()
             })
         })
     })
@@ -431,4 +347,8 @@ function drawTree(treeData) {
     // Layout the tree initially and center on the root node.
     update(root);
     centerNode(root);
+    d3.select('svg').on('click', function(e){
+        console.log(1)
+        return false
+    })
 };
