@@ -1,0 +1,61 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文件上传demo</title>
+<script src="../static/js/jquery-2.1.1.min.js"></script>
+<script src="fileupload.js"></script>
+<!-- 当需要获取照片exif信息时导入 直接文件上传则不需要 -->
+<script src="exif.min.js"></script>
+<style>
+	body{padding:0;margin:0;}
+	#box{height:400px;width:400px;border-radius:8px;border:5px #888 dashed;display: flex;justify-content: center;align-items: center;}
+	#box>img{max-height:400px;max-width:400px;}
+</style>
+</head>
+
+<body>
+<blockquote style="padding:10px;border-left:5px solid #888;background:#eee;">
+    <p>需求：选择一个存在exif的照片，并在地图上显示</p>
+    <p>科普：Exif是英文ExchangeableImageFile(可交换图像文件)的缩写</p>
+    <p>比如手机或相机拍照保存了GPS信息，拍摄时间，等等一系列信息的照片</p>
+</blockquote>
+
+<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);">
+	<button onclick="up.chooseImage()" style="border:0;background:#876543;padding:10px 15px;color:white;border-radius:3px;margin:20px;">单选图片</button>
+	<div id="box"></div>
+	<div class="info-box" style="line-height:40px;"></div>
+</div>
+
+<script>
+	var up = new window.IO.fileUpload(true); //带参数 意为单文件
+	//筛选文件 不符合要求的文件将不会上传
+	var filter = {maxsize:2*1024*1024,type:['image']};
+	up.change(function(file,errormsg){
+		//得到图片临时路径 优先blob: 其次base64
+		up.getImageSrc(file,function(src){
+			if(src){
+				$('#box').html('<img src="'+src+'"/>');
+				up.getImageBaseExif(file,function(rs){
+					console.log(rs || '该文件无exif信息');
+					if(rs){
+						$('.info-box').html('该图片存在exif信息,基本信息见右上角<a href=/leaflet/showpic.html?latitude="'+rs.latitude+'&longitude="+'+rs.longitude+'&blob='+src+'>在地图中显示</a>');
+					}else{
+						$('.info-box').html('该图片不存在exif信息');
+					}
+				});
+			}else{
+				$('.info-box').html('非图片文件');
+			}
+		});
+	},filter);
+
+	$('.info-box').on('click','button',function(){
+
+	})
+</script>
+
+
+</body>
+</html>

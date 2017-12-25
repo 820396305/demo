@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>scan</title>
+	<style>
+		html {
+			box-sizing: border-box;
+		}
+		*, *:before, *:after {
+			box-sizing: inherit;
+		}
+		.xa-flex-center {
+			display: flex;
+    		justify-content: center;
+        	align-items: center;
+		}
+
+		.sign-scan {
+		  height: 170px;
+		  width: 170px;
+		  margin: 0 auto;
+		  color: white;
+		  background-color: #4fd44c;
+		  border: 1px solid #4ec043;
+		  border-radius: 50%;
+		  box-shadow: 0 0 50px #7cd47c;
+		}
+		.sign-scan:after {
+		  content: '扫一扫';
+		  display:block;
+		  font-size: 24px;
+		  height: 100px;
+		  width: 100px;
+		  text-align: center;
+		  line-height: 30px;
+		  padding: 35px 0;
+		  background: linear-gradient(to right, #A7E9A5, #A7E9A5 3px,transparent 3px, transparent 97px, #A7E9A5 97px, #A7E9A5), linear-gradient(to right, #A7E9A5, #A7E9A5 3px,transparent 3px, transparent 97px, #A7E9A5 97px, #A7E9A5), linear-gradient(to bottom, #A7E9A5, #A7E9A5 3px,transparent 3px, transparent 97px, #A7E9A5 97px, #A7E9A5), linear-gradient(to bottom, #A7E9A5, #A7E9A5 3px,transparent 3px, transparent 97px, #A7E9A5 97px, #A7E9A5);
+		  background-size: 100% 11px, 100% 11px, 11px 100%, 11px 100%;
+		  background-repeat: no-repeat;
+		  background-position: 0 0, 0 89px, 0 0, 89px 0;
+		}
+	</style>
+</head>
+<body>
+	<div class="sign-scan xa-flex-center"></div>
+</body>
+</html>

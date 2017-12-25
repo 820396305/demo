@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="echarts.js"></script>
+  <title>测试</title>
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="main" style="height:100%;width:100%;"></div>
+
+  <script>
+    var myChart = echarts.init(document.getElementById('main'));
+    var option = {
+      title: {
+        text: '冰桶挑战'
+      },
+      toolbox: {
+        show: true,
+        feature: {
+          mark: { show: true },
+          dataView: { show: true, readOnly: false },
+          restore: { show: true },
+          saveAsImage: { show: true }
+        }
+      },
+      series: [
+        {
+          name: '树图',
+          type: 'tree',
+          orient: 'horizontal',  // vertical horizontal
+          rootLocation: { x: 50, y: 'center' }, // 根节点位置  {x: 100, y: 'center'}
+          nodePadding: 15,
+          layerPadding: 90,
+          hoverable: false,
+          roam: true,
+          symbolSize: 6,
+          // direction: 'inverse',
+          itemStyle: {
+            normal: {
+              color: '#4883b4',
+              label: {
+                show: true,
+                position: 'right',
+                formatter: "{b}",
+                textStyle: {
+                  color: '#000',
+                  fontSize: 5
+                }
+              },
+              lineStyle: {
+                color: '#ccc',
+                type: 'curve' // 'curve'|'broken'|'solid'|'dotted'|'dashed'
+
+              }
+            },
+            emphasis: {
+              color: '#4883b4',
+              label: {
+                show: false
+              },
+              borderWidth: 0
+            }
+          },
+
+          data: [
+            {
+              "name": "冰桶挑战",
+              "children": [
+                {
+                  "name": "罗震环",
+                  "children": [
+                    {
+                      "name": "邹凯",
+                      "children": [
+                        {
+                          "name": "许嵩 ",
+                          "children": [
+                            {
+                              "name": "许嵩 "
+                            },
+                            {
+                              "name": "张成龙"
+                            },
+                            {
+                              "name": "邹市明 "
+                            }
+                          ]
+                        },
+                        {
+                          "name": "张成龙",
+                          "children": [
+                            {
+                              "name": "许嵩 "
+                            },
+                            {
+                              "name": "张成龙"
+                            },
+                            {
+                              "name": "邹市明 "
+                            }
+                          ]
+                        },
+                        {
+                          "name": "邹市明 ",
+                          "children": [
+                            {
+                              "name": "许嵩 "
+                            },
+                            {
+                              "name": "张成龙"
+                            },
+                            {
+                              "name": "邹市明 "
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "邹凯",
+                      "children": [
+                        {
+                          "name": "许嵩 ",
+                          "children": [
+                            {
+                              "name": "许嵩 "
+                            },
+                            {
+                              "name": "张成龙"
+                            },
+                            {
+                              "name": "邹市明 "
+                            }
+                          ]
+                        },
+                        {
+                          "name": "张成龙",
+                          "children": [
+                            {
+                              "name": "许嵩 "
+                            },
+                            {
+                              "name": "张成龙"
+                            },
+                            {
+                              "name": "邹市明 "
+                            }
+                          ]
+                        },
+                        {
+                          "name": "邹市明 ",
+                          "children": [
+                            {
+                              "name": "许嵩 "
+                            },
+                            {
+                              "name": "张成龙"
+                            },
+                            {
+                              "name": "邹市明 "
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "邹凯",
+                      "children": [
+                        {
+                          "name": "许嵩 ",
+                          "children": [
+                            {
+                              "name": "许嵩 "
+                            },
+                            {
+                              "name": "张成龙"
+                            },
+                            {
+                              "name": "邹市明 "
+                            }
+                          ]
+                        },
+                        {
+                          "name": "张成龙",
+                          "children": [
+                            {
+                              "name": "许嵩 "
+                            },
+                            {
+                              "name": "张成龙"
+                            },
+                            {
+                              "name": "邹市明 "
+                            }
+                          ]
+                        },
+                        {
+                          "name": "邹市明 ",
+                          "children": [
+                            {
+                              "name": "许嵩 "
+                            },
+                            {
+                              "name": "张成龙"
+                            },
+                            {
+                              "name": "邹市明 "
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+    myChart.setOption(option);
+  </script>
+</body>
+
+</html>

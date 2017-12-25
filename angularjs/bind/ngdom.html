@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ngDOM操作</title>
+	<script src="../public/javascripts/angular.min.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" type="text/css" href="../public/stylesheets/bootstrap.min.css">
+</head>
+<body ng-app="app">
+	<button ng-disabled="myswitch">click</button><br>
+	<label>
+		<input type="checkbox" ng-model="myswitch">选择
+	</label><br>
+	<div ng-show="myswitch">ngshow 默认隐藏</div>
+
+	<div ng-hide="myswitch">nghide 默认显示</div>
+
+	{{myswitch}}
+
+	<br>
+	<div ng-controller="clickCtrl">
+		<button ng-click="add()">+1</button>
+		<button ng-click="sub()">-1</button><br>
+		{{ count }}
+	</div>
+
+</body>
+
+	<script>
+		var app = angular.module('app',[]);
+
+		app.controller('clickCtrl',function($scope){
+			$scope.count = 0;
+			$scope.add = function(){
+				$scope.count ++ ;
+			}
+
+			$scope.sub = function(){
+				$scope.count -- ;
+			}
+		});
+	</script>
+
+</html>

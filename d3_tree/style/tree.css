@@ -1,0 +1,99 @@
+body,html{
+  margin: 0;
+  height:100%;
+  width:100%;
+  overflow: hidden;
+}
+
+#userinfo {
+	display: none;
+  transform: rotate(-90deg);
+  position: absolute;
+  left: -130px;
+  bottom: 50%;
+  z-index: 99;
+  height: 60px;
+  width: 320px;
+  line-height: 24px;
+  text-align: justify;
+  background:rgba(0,0,0,.8);
+  color: white;
+  box-sizing: border-box;
+  pointer-events:none;
+}
+
+#userinfo #image {
+  height: 60px;
+  width: 60px;
+}
+
+#userinfo #user-info {
+padding: 6px 10px;
+  color: white;
+  font-size:14px;
+}
+
+.node {
+  cursor: pointer;
+}
+
+.overlay{
+    background-color: #F7F4F0;
+}
+ 
+.node circle {
+  fill: #fff;
+  stroke: #E6E2DD;
+  stroke-width: 1.5px;
+}
+ 
+.node text {
+  font-size:11px; 
+  font-family: "Georgia";
+  color: #4D3636;
+  transform: rotate(-90deg) translate(36px, 25px);
+}
+
+.node image{
+  transform: rotate(-90deg);
+}
+ 
+.link {
+  fill: none;
+  stroke: #E6E2DD;
+  stroke-width: 1.5px;
+}
+
+.ghostCircle.show{
+    display:block;
+}
+
+.ghostCircle, .activeDrag .ghostCircle{
+     display: none;
+}
+
+.webkit-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+.webkit-vertical {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+.webkit-center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}

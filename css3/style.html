@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>样式库</title>
+	<style>
+		*{ padding: 0px; margin: 0px; list-style: none; }
+		html,body{height:100%;width:100%;}
+		body { font-family: "Microsoft YaHei", "微软雅黑", "宋体", Tahoma, Helvetica; font-size: 12px; }
+		
+		.clearfix:after, .clearfix:before { content: ""; display: table; }
+		.clearfix:after { clear: both; }
+		.clearfix { zoom: 1; }
+		.fr { float: right; }
+		.fl { float: left; }
+
+
+		input{border:1px solid #ccc;border-radius:3px;line-height:26px; padding:0 4px;}
+		input:focus{background:#eee;border:1px solid #ccc !important;}
+		/********按钮样式********/
+		.btn, .btn-red, .btn-info, .btn-success, .btn-white { display: inline-block; padding: 6px 12px; border: 0px; border-radius: 3px; text-align: center; text-decoration: none; background: #CCC; color: #222; cursor: pointer; vertical-align: middle; box-shadow: 0 0 3px #ccc; white-space: nowrap; border: 1px solid transparent; }
+		.btn:hover { background: #bbb; color: #111; }
+		.btn-red { background: rgba(255,0,0,0.8); color: white; }
+		.btn-red:hover { background: rgb(255,0,0); }
+		.btn-success { background: #5cb85c; color: white; }
+		.btn-success:hover { background: #5cb88c; }
+		.btn-info { background: #2b669a; color: white; }
+		.btn-info:hover { background: #2b667a; }
+		.btn-white { background: white; color: #333; }
+		.btn-white:hover { color: black; }
+		/********按钮小数字样式********/
+		.inner-btn { min-width: 10px; padding: 2px 7px; margin: auto 5px; font-size: 12px; text-align: center; font-weight: 700; line-height: 0.8; vertical-align: baseline; border-radius: 10px; background: white; color: #222; }
+		.btn .inner-btn { color: #222; }
+		.btn-red .inner-btn { color: red; }
+		.btn-success .inner-btn { color: #5cb85c; }
+		.btn-info .inner-btn { color: #2b669a; }
+		.btn-white .inner-btn { background: #222; color: white; }
+
+		/********分页样式********/
+		.page-bar { text-align: center; }
+		.page-items { margin: 15px 0px 5px 0px; padding: 0px; border-radius: 4px; display: inline-block; }
+		.page-items>li { color: #428bca; border: 1px solid #dddddd; background-color: white; padding: 5px 10px; font-size: 12px; float: left; margin-left: -1px; position: relative; display: block; line-height: 1.5em; cursor: pointer; }
+		.page-current-item { color: white !important; background-color: #428bca !important; border-color: #428bca; cursor: default !important; }
+		.page-disable-item { color: #999 !important; background-color: white !important; border-color: #ddd; cursor: default !important; }
+		.省略号 { color: #666 !important; background-color: white !important; border: 0px !important; margin-left: 0px !important; cursor: default; }
+		.page-jump { display: inline-block; height: 28px; margin-left: 20px; transform: translate(0, -16px); -webkit-transform: translate(0, -16px); -moz-transform: translate(0, -16px); -ms-transform: translate(0, -16px); -o-transform: translate(0, -16px); }
+		.page-jump input { width: 50px; padding: 0px; margin: 0px; height: 27px; text-align: center; border: 1px solid #ccc; color: #428bca; }
+		.page-jump button { width: 50px; padding: 0px; float margin:0px;
+		height: 29px; border: 1px solid #ccc; background: white; color: #428bca; margin-left: 5px; }
+		.page-info { line-height: 25px; font-size: 13px; text-align: center; color: #428bca; }
+
+
+		/********弹出框样式  start********/
+		.layer { position: fixed; left: 0; top: 0; background: rgba(0,0,0,0.3); width: 100%; height: 100%; z-index: 100; }
+		.popup { min-width: 300px; border: 1px solid #9EBEE5; background: #fff; z-index: 11; position: fixed; left: 50%; top: 50%; margin-top: -171px; margin-left: -250px; padding: 2px; }
+		.popup .title { width: 100%; height: 26px; line-height: 26px; text-indent: 0.8em; color: white; background: rgb(72,148,213); }
+		.popup .close {width:20px; height:20px;font-size:20px;margin:-2px 10px 0 0;}
+		.popup .buttons { text-align: center;width:100%; padding: 10px 0; }
+		.popup .buttons div { margin: 5px 10px; }
+		.popup .main { padding: 0px; min-height: 20px; }
+		.popup .close { cursor: pointer; }
+		.popup .content { padding: 15px; }
+		/********弹出框样式  end********/
+
+		.msg-warn{position:relative;background:#fff6d2;color:#666;border:1px solid #ffe57d;padding:3px 10px 3px 40px;line-height:18px;}
+		.msg-warn b{position:absolute;top:50%;left:10px;display:block;margin-top:-8px;width:16px;height:17px;overflow:hidden;background:url(https://miscssl.360buyimg.com/user/passport-2015/widget/login-form/i/pwd-icons-new.png) -104px -22px no-repeat;}
+
+
+	</style>
+</head>
+<body>
+	<div class="msg-warn"><b></b>公共场所不建议自动登录，以防账号丢失公共场所不建议自动登录，以防账号丢失</div>
+
+	<button class="btn">返回</button>
+	<a class="btn-red">小明</a>
+	<button class="btn-info">注册<span class="inner-btn">12</span></button>
+	<button class="btn"><span class="inner-btn">12</span>返回</button>
+	<a class="btn-red"><span class="inner-btn">12</span>小明</a> <span class="btn-success">helo<span class="inner-btn">1</span></span>
+	<div class="btn-success">张三<span class="inner-btn">12</span></div>
+	<div class="btn-white"><span class="inner-btn">1123</span>登录</div>
+</body>
+</html>
